@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "MecanumTeleOp", group = "TeleOp")
 public class MechenumTeleOp extends OpMode {
+
     private DcMotor frontRight;
     private DcMotor backRight;
     private DcMotor backLeft;
@@ -18,6 +19,7 @@ public class MechenumTeleOp extends OpMode {
     private DcMotor intakeRight;
   //  private DcMotor lift;
    // private Servo dropper;
+
 
     @Override
     public void init() {
@@ -35,13 +37,13 @@ public class MechenumTeleOp extends OpMode {
 
         // set wheel direction
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //set attatchment direction
         intakeLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        intakeRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        intakeRight.setDirection(DcMotorSimple.Direction.REVERSE);
        // lift.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // set wheel power variables
@@ -56,7 +58,7 @@ public class MechenumTeleOp extends OpMode {
         //lift.setPower(0);
 
         // set deadzone
-        gamepad1.setJoystickDeadzone(0.1f);
+        gamepad1.setJoystickDeadzone(0.2f);
     }
 
     public void move() {

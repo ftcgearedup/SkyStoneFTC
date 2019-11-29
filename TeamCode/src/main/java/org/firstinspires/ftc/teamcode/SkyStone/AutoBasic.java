@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.SkyStone;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaSkyStoneNavigationWebcam;
-
+@Autonomous(name = "MainAuto", group = "Autonomous")
 public class AutoBasic extends VuforiaSkyStoneNavigationWebcam {
     private DcMotor frontRight;
     private DcMotor backRight;
@@ -18,8 +20,10 @@ public class AutoBasic extends VuforiaSkyStoneNavigationWebcam {
     private DcMotor intakeRight;
    //private DcMotor lift;
   //  private Servo dropper;
-    private Servo clamp1;
-    private Servo clamp2;
+    //private Servo clamp1;
+   // private Servo clamp2;
+
+
 
     private double ticksPerRevNR20 = 560;
     private double ticksPerRevNR40 = 1120;
@@ -28,9 +32,9 @@ public class AutoBasic extends VuforiaSkyStoneNavigationWebcam {
     //The post gear box gear ratio.
     private double gearRatio = 1.0;
     //The circumference of the drive wheel.
-    private double wheelCircumference = 25.1327; // ??
+    private double wheelCircumference = 31.9024; // ??
     //Formula to calculate ticks per centimeter for the current drive set up.FORWARDS/BACKWARD ONLY
-    private double ticksPerCm = (ticksPerRevNR20 * gearRatio) / wheelCircumference;
+    private double ticksPerCm = (ticksPerRevNR40 * gearRatio) / wheelCircumference;
     //Formula to calculate ticks per centimeter for the current drive set up.SIDEWAYS
 
     public void initHardware() {
@@ -45,17 +49,17 @@ public class AutoBasic extends VuforiaSkyStoneNavigationWebcam {
         intakeRight = hardwareMap.dcMotor.get("ir");
       //  lift = hardwareMap.dcMotor.get("lift");
       //  dropper = hardwareMap.servo.get("drop");
-        clamp1 = hardwareMap.servo.get("clamp1");
-        clamp2 = hardwareMap.servo.cast("clamp2");
+      //  clamp1 = hardwareMap.servo.get("clamp1");
+        //clamp2 = hardwareMap.servo.cast("clamp2");
 
         // set wheel direction
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //set attatchment direction
-        intakeLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        intakeLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeRight.setDirection(DcMotorSimple.Direction.FORWARD);
       //  lift.setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -73,13 +77,15 @@ public class AutoBasic extends VuforiaSkyStoneNavigationWebcam {
     }
 
     public void runOpMode(){
-        initHardware();
-        setZeroPowBehv(DcMotor.ZeroPowerBehavior.BRAKE);
-        setDirection();
-        setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        waitForStart();
+       while (opModeIsActive()) {
+           initHardware();
+           setZeroPowBehv(DcMotor.ZeroPowerBehavior.BRAKE);
+           setDirection();
+           setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        chooseprogram();
-
+           chooseprogram();
+       }
     }
 
     public void setZeroPowBehv(DcMotor.ZeroPowerBehavior behv) {
@@ -91,9 +97,9 @@ public class AutoBasic extends VuforiaSkyStoneNavigationWebcam {
 
     public void setDirection() {
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     public void setDriveMode(DcMotor.RunMode mode) {
@@ -108,9 +114,9 @@ public class AutoBasic extends VuforiaSkyStoneNavigationWebcam {
     public void forward(double targetDistance, double power) {
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        double targetDistanceTicks = targetDistance * ticksPerCm;
+        double targetDistanceTicks = Math.abs(targetDistance * ticksPerCm);
         double currentDistanceTicks = 0;
-        while ((currentDistanceTicks < targetDistanceTicks) && opModeIsActive()) {
+        while ((Math.abs(currentDistanceTicks) < targetDistanceTicks) && opModeIsActive()) {
             telemetry.addData("Target pos ticks: ", targetDistanceTicks);
             telemetry.addData("Target Distance:", targetDistance + "cm");
             currentDistanceTicks = (frontRight.getCurrentPosition() +
@@ -134,41 +140,53 @@ public class AutoBasic extends VuforiaSkyStoneNavigationWebcam {
         if(gamepad1.a){
             telemetry.addData("RobotPosition","RED1");
             red1();
+            telemetry.update();
         } else if (gamepad1.b){
             telemetry.addData("RobotPosition","RED2");
             red2();
+            telemetry.update();
         } else if (gamepad1.x){
             telemetry.addData("RobotPosition", "BLUE1");
             blue1();
+            telemetry.update();
         } else if (gamepad1.y){
             telemetry.addData("RobotPosition","BLUE2");
             blue2();
+            telemetry.update();
         }
     }
 
     public void red1(){
         waitForStart();
-        while (opModeIsActive()) {
-            forward(30, 1);
-            setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
+       if (opModeIsActive()) {
+            forward(65, .5);
             double encoderVal = frontLeft.getCurrentPosition();
-            while (lastSkyStoneLocation == null) {
+           /* while (lastSkyStoneLocation == null) {
+                setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 //driveLeft
-                frontLeft.setPower(.5);
-                frontRight.setPower(-.5);
-                backLeft.setPower(-.5);
-                backRight.setPower(.5);
+                frontLeft.setPower(-.25);
+                frontRight.setPower(.25);
+                backLeft.setPower(.25);
+                backRight.setPower(-.25);
                 encoderVal = frontLeft.getCurrentPosition();
             }
             frontLeft.setPower(0);
             frontRight.setPower(0);
             backLeft.setPower(0);
             backRight.setPower(0);
+*/
+           sideLeft(1000,.5);
             intake(1);
-            forward(10, 1);
-            forward(10, -1);
+            forward(30, .5);
+            forward(30, -.5);
+            forward(0,0);
+            sideLeft(500, .5);
+            forward(60,.5);
+            forward(60, -5);
             intake(0);
+          /*  sideRight(10,.5);
+
             setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
             while (frontLeft.getCurrentPosition() >= -encoderVal) {
@@ -177,22 +195,24 @@ public class AutoBasic extends VuforiaSkyStoneNavigationWebcam {
                 backLeft.setPower(.5);
                 backRight.setPower(-.5);
             }
+            */
             frontLeft.setPower(0);
             frontRight.setPower(0);
             backLeft.setPower(0);
             backRight.setPower(0);
-            sideRight(90, 1);
-            clamp1.setPosition(1);
-            clamp2.setPosition(1);
-            forward(30, 1);
-            clamp1.setPosition(0);
-            clamp2.setPosition(0);
-            sideLeft(30, 1);
-            pivotCC(90, 1);
-            clamp1.setPosition(1);
-            clamp2.setPosition(1);
-            sideRight(60, 1);
-            intake(-1);
+          //  sideRight(4000, 1);
+          //  clamp1.setPosition(1);
+        //    clamp2.setPosition(1);
+            //forward(30, 1);
+         //   clamp1.setPosition(0);
+         //   clamp2.setPosition(0);
+            //sideLeft(4000, 1);
+            //pivotCC(90, 1);
+         //   clamp1.setPosition(1);
+         //   clamp2.setPosition(1);
+            //sideRight(60, 1);
+            //intake(-1);
+
         }
     }
     public void red2(){
@@ -230,15 +250,15 @@ public class AutoBasic extends VuforiaSkyStoneNavigationWebcam {
             backLeft.setPower(0);
             backRight.setPower(0);
             sideRight(30, 1);
-            clamp1.setPosition(1);
-            clamp2.setPosition(1);
+           // clamp1.setPosition(1);
+            //clamp2.setPosition(1);
             forward(30, 1);
-            clamp1.setPosition(0);
-            clamp2.setPosition(0);
+            //clamp1.setPosition(0);
+            //clamp2.setPosition(0);
             sideLeft(30,1);
             pivotCC(90, 1);
-            clamp1.setPosition(1);
-            clamp2.setPosition(1);
+            //clamp1.setPosition(1);
+            //clamp2.setPosition(1);
             sideRight(60,1);
             intake(-1);
         }
@@ -279,15 +299,15 @@ public class AutoBasic extends VuforiaSkyStoneNavigationWebcam {
             backLeft.setPower(0);
             backRight.setPower(0);
             sideLeft(90, 1);
-            clamp1.setPosition(1);
-            clamp2.setPosition(1);
+           // clamp1.setPosition(1);
+            //clamp2.setPosition(1);
             forward(30, 1);
-            clamp1.setPosition(0);
-            clamp2.setPosition(0);
+            //clamp1.setPosition(0);
+            //clamp2.setPosition(0);
             sideRight(30, 1);
             pivotCC(90, 1);
-            clamp1.setPosition(1);
-            clamp2.setPosition(1);
+            //clamp1.setPosition(1);
+            //clamp2.setPosition(1);
             sideLeft(60, 1);
             intake(-1);
         }
@@ -327,15 +347,15 @@ public class AutoBasic extends VuforiaSkyStoneNavigationWebcam {
             backLeft.setPower(0);
             backRight.setPower(0);
             sideLeft(30, 1);
-            clamp1.setPosition(1);
-            clamp2.setPosition(1);
+            //clamp1.setPosition(1);
+            //clamp2.setPosition(1);
             forward(30, 1);
-            clamp1.setPosition(0);
-            clamp2.setPosition(0);
+            //clamp1.setPosition(0);
+            //clamp2.setPosition(0);
             sideRight(30,1);
             pivotCC(90, 1);
-            clamp1.setPosition(1);
-            clamp2.setPosition(1);
+            //clamp1.setPosition(1);
+            //clamp2.setPosition(1);
             sideLeft(60,1);
             intake(-1);
         }
@@ -347,7 +367,7 @@ public class AutoBasic extends VuforiaSkyStoneNavigationWebcam {
         backRight.setPower(0);
     }
 
-    public void sideLeft(double targetDistance, double power) {
+    public void sideRight(double targetDistance, double power) {
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
         double currentDistance = 0;
@@ -361,7 +381,7 @@ public class AutoBasic extends VuforiaSkyStoneNavigationWebcam {
 
     }
 
-    public void sideRight(double targetDistance, double power) {
+    public void sideLeft(double targetDistance, double power) {
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
         double currentDistance = 0;
