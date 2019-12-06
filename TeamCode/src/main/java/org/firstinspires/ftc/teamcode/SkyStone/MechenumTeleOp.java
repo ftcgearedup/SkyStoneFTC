@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 @TeleOp(name = "MecanumTeleOp", group = "TeleOp")
 public class MechenumTeleOp extends OpMode {
 
@@ -17,8 +19,8 @@ public class MechenumTeleOp extends OpMode {
     //Attachments
     private DcMotor intakeLeft;
     private DcMotor intakeRight;
-  //  private DcMotor lift;
-   // private Servo dropper;
+    private DcMotor lift;
+    private Servo dropper;
 
 
     @Override
@@ -32,8 +34,8 @@ public class MechenumTeleOp extends OpMode {
         //init the Attachments
         intakeLeft = hardwareMap.dcMotor.get("il");
         intakeRight = hardwareMap.dcMotor.get("ir");
-      //  lift = hardwareMap.dcMotor.get("lift");
-      //  dropper = hardwareMap.servo.get("drop");
+        lift = hardwareMap.dcMotor.get("lift");
+        dropper = hardwareMap.servo.get("drop");
 
         // set wheel direction
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -44,7 +46,7 @@ public class MechenumTeleOp extends OpMode {
         //set attatchment direction
         intakeLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         intakeRight.setDirection(DcMotorSimple.Direction.REVERSE);
-       // lift.setDirection(DcMotorSimple.Direction.FORWARD);
+        lift.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // set wheel power variables
         frontLeft.setPower(0);
@@ -55,7 +57,7 @@ public class MechenumTeleOp extends OpMode {
         // set attachment power variables
         intakeLeft.setPower(0);
         intakeRight.setPower(0);
-        //lift.setPower(0);
+        lift.setPower(0);
 
         // set deadzone
         gamepad1.setJoystickDeadzone(0.2f);
@@ -66,9 +68,9 @@ public class MechenumTeleOp extends OpMode {
         //in order to counteract the differences between the basic formula for strafing and the one for moving forwards and backwards,
         //we use trigonometry to derive relevant powers for each wheel tio move at the correct angles.
         // translating polar coordanates of joystick to polar coordinates of mechenum drive
-        double r = Math.hypot(gamepad1.left_stick_x, gamepad1.right_stick_y);
-        double robotAngle = Math.atan2(gamepad1.right_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
-        double rightX = gamepad1.right_stick_x;
+        double r = Math.hypot(gamepad1.right_stick_x, gamepad1.left_stick_y);
+        double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.right_stick_x) - Math.PI / 4;
+        double rightX = gamepad1.left_stick_x;
         final double fr = r * Math.cos(robotAngle) + rightX;
         final double fl = r * Math.sin(robotAngle) - rightX;
         final double bl = r * Math.sin(robotAngle) + rightX;
@@ -92,31 +94,21 @@ public class MechenumTeleOp extends OpMode {
             backLeft.setPower(bl);
             backRight.setPower(br);
         }
-        //INTAKE
-        if (gamepad2.dpad_up) {
-            intakeRight.setPower(1);
-            intakeLeft.setPower(1);
-        } else if (gamepad2.dpad_down) {
-            intakeRight.setPower(-1);
-            intakeLeft.setPower(-1);
-        } else if (gamepad2.dpad_right) {
-            intakeRight.setPower(1);
-            intakeLeft.setPower(0);
-        } else if (gamepad2.dpad_left) {
-            intakeLeft.setPower(1);
-            intakeRight.setPower(0);
-        } else {
-            intakeRight.setPower(0);
-            intakeLeft.setPower(0);
+        //lift
+       if (gamepad2.right_trigger > 0){
+           lift.setPower(1);
+       } if(gamepad2.left_trigger >0){
+           lift.setPower(-1);
         }
         //Dropper
-    //    if (gamepad2.right_trigger > 0) {
-     //       dropper.setPosition(1);
-   //     } else {
-     //       dropper.setPosition(0);
-     //   }
+        if (gamepad2.b = true) {
+            dropper.setPosition(1);
+        } else {
+            dropper.setPosition(0);
+        }
         //lift
-      //  lift.setPower(gamepad2.right_stick_y);
+        intakeLeft.setPower(gamepad2.right_stick_y);
+        intakeRight.setPower(gamepad2.right_stick_y);
         //Telemetry
         telemetry.addData("motor speeds", "fl " + fl + " fr " + fr + " bl " + bl + " br " + br);
         telemetry.update();
