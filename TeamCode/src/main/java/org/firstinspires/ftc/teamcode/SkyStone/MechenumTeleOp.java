@@ -21,6 +21,8 @@ public class MechenumTeleOp extends OpMode {
     private DcMotor intakeRight;
     private DcMotor lift;
     private Servo dropper;
+    private Servo clamp1;
+    private Servo clamp2;
 
 
     @Override
@@ -36,6 +38,8 @@ public class MechenumTeleOp extends OpMode {
         intakeRight = hardwareMap.dcMotor.get("ir");
         lift = hardwareMap.dcMotor.get("lift");
         dropper = hardwareMap.servo.get("drop");
+        clamp1 = hardwareMap.servo.get("clamp1");
+        clamp2 = hardwareMap.servo.get("clamp2");
 
         // set wheel direction
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -101,22 +105,40 @@ public class MechenumTeleOp extends OpMode {
            lift.setPower(-1);
         }
         //Dropper
-        if (gamepad2.b = true) {
-            dropper.setPosition(1);
+        if (gamepad2.a) {
+            telemetry.addData("a Button", "pressed");
+            dropper.setPosition(.1);
+            telemetry.update();
         } else {
-            dropper.setPosition(0);
+            dropper.setPosition(.4);
+            telemetry.addData("a Button", " not pressed");
+            telemetry.update();
         }
-        //lift
+        //intake
         intakeLeft.setPower(gamepad2.right_stick_y);
         intakeRight.setPower(gamepad2.right_stick_y);
         //Telemetry
         telemetry.addData("motor speeds", "fl " + fl + " fr " + fr + " bl " + bl + " br " + br);
         telemetry.update();
+
+        //clamps
+        if (gamepad2.right_bumper){
+            clamp1.setPosition(0);
+        }else{
+            clamp1.setPosition(.8); //Was 1, changed to .8 so the servo does not push on the frame.
+        }
+
+        if(gamepad2.left_bumper){
+            clamp2.setPosition(1);
+        }else{
+            clamp2.setPosition(.4); //Was 0, changed to .2 so the servo does not push on the frame.
+        }
+
     }
 
     @Override
     public void loop() {
-        init();
+        //init();
         move();
     }
 
