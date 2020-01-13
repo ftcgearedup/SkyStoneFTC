@@ -9,6 +9,7 @@ public class Testing extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         colorSensor  = hardwareMap.colorSensor.get("color");
+        waitForStart();
         while (opModeIsActive()){
             colorSensor  = hardwareMap.colorSensor.get("color");
             readColorSensor();
@@ -18,6 +19,9 @@ public class Testing extends LinearOpMode {
         colorSensor.enableLed(true);
         colorSensor.alpha();
         telemetry.addData("LightVal", colorSensor.alpha());
+        telemetry.addData("LightRed", colorSensor.red());
+        telemetry.addData("LightBlue", colorSensor.blue());
+        telemetry.addData("LightGreen", colorSensor.green());
         telemetry.update();
     }
 }

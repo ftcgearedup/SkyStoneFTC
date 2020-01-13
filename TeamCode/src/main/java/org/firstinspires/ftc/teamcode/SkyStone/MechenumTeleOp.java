@@ -119,6 +119,12 @@ public class MechenumTeleOp extends OpMode {
         //intake
         intakeLeft.setPower(gamepad2.right_stick_y);
         intakeRight.setPower(gamepad2.right_stick_y);
+        if (gamepad2.dpad_left){
+            intakeLeft.setPower(1);
+        }
+        if (gamepad2.dpad_right){
+            intakeRight.setPower(1);
+        }
         //Telemetry
         telemetry.addData("motor speeds", "fl " + fl + " fr " + fr + " bl " + bl + " br " + br);
         telemetry.update();

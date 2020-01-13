@@ -54,7 +54,7 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
 
 
         // tHIS Is set up for vuforia stuff
-        //Please don't use vuforia unless you are a master programmer of it gets much better in the futurw
+        //Please don't use vuforia unless you are a master programmer or it gets much better in the futurw
         //its a bit of a waste of time
         //The color sensor can do the same thing, and navigation targets are hard
         //you could always try tensor flow. That works better but is a bit tricky to set up
@@ -149,7 +149,8 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
         }
 
     }
-
+//move left.
+    //when the robot reaches the target encoder tick distance, it will stop,
     public void sideLeft(double targetDistance, double power) {
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -162,6 +163,7 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
             backRight.setPower(-power);
         }
     }
+
     //clockwise is 0 cc is 1
     public void pivotCW(double degree, double power) {
 

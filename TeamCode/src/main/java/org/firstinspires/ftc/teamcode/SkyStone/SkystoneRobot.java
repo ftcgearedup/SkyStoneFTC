@@ -17,7 +17,7 @@ public class SkystoneRobot extends MechenumDriving {
     public DcMotor intakeLeft;
     public DcMotor intakeRight;
 
-    public void initAttachCode(){
+    public void initAttachCode() {
         //init the Attachments
         intakeLeft = hardwareMap.dcMotor.get("il");
         intakeRight = hardwareMap.dcMotor.get("ir");
@@ -36,50 +36,62 @@ public class SkystoneRobot extends MechenumDriving {
         intakeRight.setPower(0);
         lift.setPower(0);
     }
+
+    //Turns both sides of the intake on.
+    public void intake(double power) {
+        intakeLeft.setPower(power);
+        intakeRight.setPower(power);
+    }
+
     // This code uses the reflected light value of the skystone in order to determine weather or not it is the correct one.
     //If the value is below 15 it collects, and  if it is above 15 it moves on.
     //These values are estimated at about a Distance of 4-6 inches in a medium light enviorment with the LED on
     public void findSkyStoneAlpha() {
-        if (colorSensor.alpha() >= 15){
+        if (colorSensor.alpha() >= 15) {
             forwardForever();
-        } else if (colorSensor.alpha() <= 15){
+        } else if (colorSensor.alpha() <= 15) {
             stopMotors();
             intake(1);
             forward(10, -.5);
-            sideRight(15,.5);
+            sideRight(15, .5);
             forward(10, .5);
         }
     }
 
     // This code uses the reflected red light value of the skystone in order to determine weather or not it is the correct one.
-    //If the value is below ____________ it collects, and  if it is above __________ it moves on.
+    //If the value is below 10 it collects, and  if it is above 10 it moves on.
     //These values are estimated at about a Distance of 4-6 inches in a medium light enviorment with the LED on
-    public void findSkyStoneRed(){
-        if (colorSensor.red() >= 15){
+    public void findSkyStoneRed() {
+        while(colorSensor.red() >= 10) {
             forwardForever();
-        } if (colorSensor.red() <= 15){
-            stopMotors();
+            if (colorSensor.red() <= 10) {
+                stopMotors();
+                intake(1);
+                forward(10, -.5);
+                sideRight(15, .5);
+                forward(10, .5);
+                break;
+            }
+        }
+
+    }
+
+    public void intakeStone() {
+        intake(1);
+        while (colorSensor.red() >= 15){
             intake(1);
-            forward(10, -.5);
-            sideRight(15,.5);
-            forward(10, .5);
+        } if (colorSensor.red() <= 15){
+            intake(0);
         }
     }
 
-    //Turns both sides of the intake on.
-    public void intake(double power){
-        intakeLeft.setPower(power);
-        intakeRight.setPower(power);
-    }
+    public void seaStone() {
+        while (colorSensor.red() <= 15) {
+            intake(1);
+        }
+        if (colorSensor.red() >= 15) {
+            intake(0);
+        }
 
-    // sends the light sensor readings to the telemetry on the phone for testing pourposes.
-    public void readColorSensor(){
-        colorSensor.enableLed(true);
-        colorSensor.alpha();
-        colorSensor.red();
-        telemetry.addData("LightVal", colorSensor.alpha());
-        telemetry.addData("RedVal", colorSensor.red());
-        telemetry.update();
     }
-
 }

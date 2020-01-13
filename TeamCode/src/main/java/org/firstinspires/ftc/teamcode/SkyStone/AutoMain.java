@@ -18,6 +18,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 public class AutoMain extends SkystoneRobot {
 
     private Gyroscope imu;
+    public void goodbye(int hello){
+        int goodbye = 23;
+    }
     private AngularVelocity angleV;
     private ColorSensor colorSensor;
     private double degree = 0;
@@ -83,7 +86,7 @@ public class AutoMain extends SkystoneRobot {
         while (opModeIsActive()) {
             forward(65, .5);
             double encoderVal = frontLeft.getCurrentPosition();
-            findSkyStoneAlpha();
+            findSkyStoneRed();
            // transport a Skystone
             sideLeft(15,.5);
             forward(35,-.5);
