@@ -91,8 +91,6 @@ public class SkystoneRobot extends MechenumDriving {
         }
         if (colorSensor.red() >= 15) {
             intake(0);
-        } else{
-            stopMotors();
         }
 
 
