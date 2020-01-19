@@ -71,7 +71,7 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
 
     }
 
-    //can be either breake or float
+    //can be either break or float
     public void setZeroPowBehv(DcMotor.ZeroPowerBehavior behv) {
         frontLeft.setZeroPowerBehavior(behv);
         frontRight.setZeroPowerBehavior(behv);
@@ -199,37 +199,13 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
     public void sidewaysWithProportionalDrive(double targetDistance, double power){
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        double currentDistance = 0;
-        while ((currentDistance < targetDistance) && opModeIsActive()) {
-            currentDistance = Math.abs(frontLeft.getCurrentPosition());
-            frontLeft.setPower(power);
-            frontRight.setPower(-power);
-            backLeft.setPower(-power);
-            backRight.setPower(power);
-        }
-        proportionalDrive();
-        if (degree == 0 || (degree > 0 && degree < 5) || (degree < 0 && Math.abs(degree) > 5)){
-            stopMotors();
-        }else {
-            while (((degree != 0) && (Math.abs(degree) > 5))){
-                if(degree > 5){
-                    backLeft.setPower(.3);
-                    frontLeft.setPower(.3);
-                }if (degree < -5){
-                    backRight.setPower(.3);
-                    frontRight.setPower(.3);
-                }
-            }
-        }
-    }
-
-    public void forwardWithProportionalDrive(double targetDistance, double power){
-        setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
         double targetDistanceTicks = Math.abs(targetDistance * ticksPerCm);
         double currentDistanceTicks = 0;
-        proportionalDrive();
+        degree = 0;
+        AngularVelocity lastAngleV = proportionalDriveStuff(imu.getAngularVelocity(AngleUnit.DEGREES));
         while ((Math.abs(currentDistanceTicks) < targetDistanceTicks) && opModeIsActive()) {
+            lastAngleV = proportionalDriveStuff(lastAngleV);
+
             telemetry.addData("Target pos ticks: ", targetDistanceTicks);
             telemetry.addData("Target Distance:", targetDistance + "cm");
             currentDistanceTicks = (frontRight.getCurrentPosition() +
@@ -239,38 +215,73 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
             telemetry.addData("Current pos ticks Avg: ", currentDistanceTicks);
             telemetry.addData("Current Distance cm", currentDistanceTicks / ticksPerCm);
             telemetry.update();
-
-            frontLeft.setPower(power);
-            frontRight.setPower(power);
-            backLeft.setPower(power);
-            backRight.setPower(power);
-        }if (degree == 0 || (degree > 0 && degree < 5) || (degree < 0 && Math.abs(degree) > 5)){
-            stopMotors();
-        }else {
-            while (((degree != 0) && (Math.abs(degree) > 5))){
-                if(degree > 5){
-                    backLeft.setPower(.3);
-                    frontLeft.setPower(.3);
-                }if (degree < -5){
-                    backRight.setPower(.3);
-                    frontRight.setPower(.3);
+            //Straighten out
+            while (Math.abs(degree) > 5) {
+                if (degree > 5) {
+                    frontLeft.setPower(power+ degree/360*.3);
+                    frontRight.setPower(-power);
+                    backLeft.setPower(power+ degree/360*.3);
+                    backRight.setPower(-power);
+                }
+                if (degree < -5) {
+                    frontLeft.setPower(power);
+                    frontRight.setPower(-power - degree/360*.3);
+                    backLeft.setPower(power);
+                    backRight.setPower(-power- degree/360*.3);
                 }
             }
+
         }
         stopMotors();
     }
 
-    public void proportionalDrive(){
-        angleV = imu.getAngularVelocity(AngleUnit.DEGREES);
+    public void forwardWithProportionalDrive(double targetDistance, double power){
+        setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        double targetDistanceTicks = Math.abs(targetDistance * ticksPerCm);
+        double currentDistanceTicks = 0;
+        degree = 0;
+        AngularVelocity lastAngleV = proportionalDriveStuff(imu.getAngularVelocity(AngleUnit.DEGREES));
+        while ((Math.abs(currentDistanceTicks) < targetDistanceTicks) && opModeIsActive()) {
+            lastAngleV = proportionalDriveStuff(lastAngleV);
+
+            telemetry.addData("Target pos ticks: ", targetDistanceTicks);
+            telemetry.addData("Target Distance:", targetDistance + "cm");
+            currentDistanceTicks = (frontRight.getCurrentPosition() +
+                    frontLeft.getCurrentPosition() +
+                    backRight.getCurrentPosition() +
+                    backLeft.getCurrentPosition()) / 4.0;
+            telemetry.addData("Current pos ticks Avg: ", currentDistanceTicks);
+            telemetry.addData("Current Distance cm", currentDistanceTicks / ticksPerCm);
+            telemetry.update();
+            //Straighten out
+            while (Math.abs(degree) > 5) {
+                if (degree > 5) {
+                    frontLeft.setPower(power+ degree/360*.3);
+                    frontRight.setPower(power);
+                    backLeft.setPower(power+ degree/360*.3);
+                    backRight.setPower(power);
+                }
+                if (degree < -5) {
+                    frontLeft.setPower(power);
+                    frontRight.setPower(power - degree/360*.3);
+                    backLeft.setPower(power);
+                    backRight.setPower(power- degree/360*.3);
+                }
+            }
+
+        }
+        stopMotors();
+    }
+
+    public AngularVelocity proportionalDriveStuff(AngularVelocity angleV){
         telemetry.addData("AV",imu.getAngularVelocity(AngleUnit.DEGREES));
         long last = angleV.acquisitionTime;
-        degree = 0;
-        while (opModeIsActive()) {
-            AngularVelocity rate = imu.getAngularVelocity(AngleUnit.DEGREES);
-            long current = rate.acquisitionTime;
-            double degreeChange = (current-last)*rate.yRotationRate/1.0e9;
-            last = current;
-            degree = degreeChange+degree;
-        }
+        AngularVelocity rate = imu.getAngularVelocity(AngleUnit.DEGREES);
+        long current = rate.acquisitionTime;
+        double degreeChange = (current-last)*rate.yRotationRate/1.0e9;
+        last = current;
+        degree = degreeChange + degree;
+        return rate;
     }
 }
