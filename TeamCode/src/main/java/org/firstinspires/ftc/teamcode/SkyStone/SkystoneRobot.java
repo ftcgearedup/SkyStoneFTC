@@ -35,6 +35,7 @@ public class SkystoneRobot extends MechenumDriving {
         intakeLeft.setPower(0);
         intakeRight.setPower(0);
         lift.setPower(0);
+
     }
 
     //Turns both sides of the intake on.
