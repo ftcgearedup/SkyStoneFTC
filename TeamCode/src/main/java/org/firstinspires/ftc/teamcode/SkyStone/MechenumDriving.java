@@ -6,9 +6,12 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gyroscope;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 // This class contains code for a functioning autonomus mecanum drivetrain
 // In order to use this, you may extend class you ar working on with this.
@@ -20,10 +23,11 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
     public DcMotor backRight;
     public DcMotor backLeft;
     public DcMotor frontLeft;
-    public Gyroscope imu;
     public AngularVelocity angleV;
     public ColorSensor colorSensor;
     public double degree = 0;
+    public BNO055IMU imu;
+
 
     private double ticksPerRevNR20 = 560;
     private double ticksPerRevNR40 = 1120;
@@ -65,7 +69,7 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
 
         //Gyro stuff
-        imu = hardwareMap.get(Gyroscope.class, "imu");
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         colorSensor = hardwareMap.colorSensor.get("color");
 
@@ -202,7 +206,7 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
         double targetDistanceTicks = Math.abs(targetDistance * ticksPerCm);
         double currentDistanceTicks = 0;
         degree = 0;
-        AngularVelocity lastAngleV = proportionalDriveStuff(imu.getAngularVelocity(AngleUnit.DEGREES));
+        AngularVelocity lastAngleV = proportionalDriveStuff(imu.getAngularVelocity());
         while ((Math.abs(currentDistanceTicks) < targetDistanceTicks) && opModeIsActive()) {
             lastAngleV = proportionalDriveStuff(lastAngleV);
 
@@ -241,7 +245,7 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
         double targetDistanceTicks = Math.abs(targetDistance * ticksPerCm);
         double currentDistanceTicks = 0;
         degree = 0;
-        AngularVelocity lastAngleV = proportionalDriveStuff(imu.getAngularVelocity(AngleUnit.DEGREES));
+        AngularVelocity lastAngleV = proportionalDriveStuff(imu.getAngularVelocity());
         while ((Math.abs(currentDistanceTicks) < targetDistanceTicks) && opModeIsActive()) {
             lastAngleV = proportionalDriveStuff(lastAngleV);
 
@@ -275,13 +279,56 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
     }
 
     public AngularVelocity proportionalDriveStuff(AngularVelocity angleV){
-        telemetry.addData("AV",imu.getAngularVelocity(AngleUnit.DEGREES));
+        telemetry.addData("AV",imu.getAngularVelocity());
         long last = angleV.acquisitionTime;
-        AngularVelocity rate = imu.getAngularVelocity(AngleUnit.DEGREES);
+        AngularVelocity rate = imu.getAngularVelocity();
         long current = rate.acquisitionTime;
         double degreeChange = (current-last)*rate.yRotationRate/1.0e9;
         last = current;
         degree = degreeChange + degree;
         return rate;
     }
+
+    // pulled from daniel's code
+    // Below this is Dainel based versions
+
+    public static final double GYRO_ERROR_THRESHOLD = 5;
+    public static final double P_GYRO_TURN_COEFF = 0.008;
+    //reference
+    // imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XZY, AngleUnit.DEGREES)
+
+    private double getGyroError(double targetAngle) {
+        double error = targetAngle - imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XZY, AngleUnit.DEGREES).firstAngle;
+
+        // keep the error on a range of -179 to 180
+        while(opModeIsActive() && error > 180)  error -= 360;
+        while(opModeIsActive() && error <= -180) error += 360;
+
+        return error;
+    }
+
+    public void gyroPivot(double speed, double angle) {
+
+        double steer;
+        double threshold = getGyroError(angle) > 0 ? GYRO_ERROR_THRESHOLD
+                : -GYRO_ERROR_THRESHOLD;
+
+        while(opModeIsActive() && Math.abs(getGyroError(angle)) > threshold) {
+
+            steer = Range.clip(getGyroError(angle)
+                    * P_GYRO_TURN_COEFF , -1, 1);
+
+            double proportionalSpeed = speed * steer;
+
+            frontLeft.setPower(proportionalSpeed);
+            frontRight.setPower(proportionalSpeed);
+            backLeft.setPower(proportionalSpeed);
+            backRight.setPower(proportionalSpeed);
+        }
+
+        // when we're on target, stop the robot
+        stopMotors();
+    }
+
+
 }
