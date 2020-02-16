@@ -14,34 +14,29 @@ public class SkystoneRobot extends MechenumDriving {
     public Servo dropper;
     public Servo clamp1;
     public Servo clamp2;
-    public DcMotor intakeLeft;
-    public DcMotor intakeRight;
+    public DcMotor intake;
 
     public void initAttachCode() {
         //init the Attachments
-        intakeLeft = hardwareMap.dcMotor.get("il");
-        intakeRight = hardwareMap.dcMotor.get("ir");
+        intake = hardwareMap.dcMotor.get("in");
         lift = hardwareMap.dcMotor.get("lift");
         dropper = hardwareMap.servo.get("drop");
         clamp1 = hardwareMap.servo.get("clamp1");
         clamp2 = hardwareMap.servo.get("clamp2");
 
         //set attatchment direction
-        intakeLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        intakeRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        intake.setDirection(DcMotorSimple.Direction.FORWARD);
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // set attachment power variables
-        intakeLeft.setPower(0);
-        intakeRight.setPower(0);
+        intake.setPower(0);
         lift.setPower(0);
 
     }
 
     //Turns both sides of the intake on.
     public void intake(double power) {
-        intakeLeft.setPower(power);
-        intakeRight.setPower(power);
+        intake.setPower(power);
     }
 
     // This code uses the reflected light value of the skystone in order to determine weather or not it is the correct one.

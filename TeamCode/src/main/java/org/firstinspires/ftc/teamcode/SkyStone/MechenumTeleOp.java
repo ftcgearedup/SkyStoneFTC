@@ -17,8 +17,7 @@ public class MechenumTeleOp extends OpMode {
     private DcMotor frontLeft;
 
     //Attachments
-    private DcMotor intakeLeft;
-    private DcMotor intakeRight;
+    private DcMotor intake;
     private DcMotor lift;
     private Servo dropper;
     private Servo clamp1;
@@ -34,8 +33,7 @@ public class MechenumTeleOp extends OpMode {
         backLeft = hardwareMap.dcMotor.get("bl");
 
         //init the Attachments
-        intakeLeft = hardwareMap.dcMotor.get("il");
-        intakeRight = hardwareMap.dcMotor.get("ir");
+        intake = hardwareMap.dcMotor.get("in");
         lift = hardwareMap.dcMotor.get("lift");
         dropper = hardwareMap.servo.get("drop");
         clamp1 = hardwareMap.servo.get("clamp1");
@@ -48,8 +46,7 @@ public class MechenumTeleOp extends OpMode {
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //set attatchment direction
-        intakeLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        intakeRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        intake.setDirection(DcMotorSimple.Direction.FORWARD);
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // set wheel power variables
@@ -59,8 +56,7 @@ public class MechenumTeleOp extends OpMode {
         backRight.setPower(0);
 
         // set attachment power variables
-        intakeLeft.setPower(0);
-        intakeRight.setPower(0);
+        intake.setPower(0);
         lift.setPower(0);
 
         // set deadzone
@@ -117,13 +113,12 @@ public class MechenumTeleOp extends OpMode {
             telemetry.update();
         }
         //intake
-        intakeLeft.setPower(gamepad2.right_stick_y);
-        intakeRight.setPower(gamepad2.right_stick_y);
+        intake.setPower(gamepad2.right_stick_y);
         if (gamepad2.dpad_left){
-            intakeLeft.setPower(1);
+            intake.setPower(1);
         }
         if (gamepad2.dpad_right){
-            intakeRight.setPower(1);
+            intake.setPower(-1);
         }
         //Telemetry
         telemetry.addData("motor speeds", "fl " + fl + " fr " + fr + " bl " + bl + " br " + br);
