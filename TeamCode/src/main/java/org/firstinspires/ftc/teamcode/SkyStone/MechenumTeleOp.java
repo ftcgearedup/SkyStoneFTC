@@ -9,45 +9,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @TeleOp(name = "MecanumTeleOp", group = "TeleOp")
-public class MechenumTeleOp extends OpMode {
+public class MechenumTeleOp extends SkystoneRobot {
 
-    private DcMotor frontRight;
-    private DcMotor backRight;
-    private DcMotor backLeft;
-    private DcMotor frontLeft;
-
-    //Attachments
-    private DcMotor intake;
-    private DcMotor lift;
-    private Servo dropper;
-    private Servo clamp1;
-    private Servo clamp2;
-
-
-    @Override
-    public void init() {
-        // init the motors
-        frontRight = hardwareMap.dcMotor.get("fr");
-        backRight = hardwareMap.dcMotor.get("br");
-        frontLeft = hardwareMap.dcMotor.get("fl");
-        backLeft = hardwareMap.dcMotor.get("bl");
-
-        //init the Attachments
-        intake = hardwareMap.dcMotor.get("in");
-        lift = hardwareMap.dcMotor.get("lift");
-        dropper = hardwareMap.servo.get("drop");
-        clamp1 = hardwareMap.servo.get("clamp1");
-        clamp2 = hardwareMap.servo.get("clamp2");
-
-        // set wheel direction
-        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        //set attatchment direction
-        intake.setDirection(DcMotorSimple.Direction.FORWARD);
-        lift.setDirection(DcMotorSimple.Direction.FORWARD);
+    public void initTeleop(){
 
         // set wheel power variables
         frontLeft.setPower(0);
@@ -61,6 +25,15 @@ public class MechenumTeleOp extends OpMode {
 
         // set deadzone
         gamepad1.setJoystickDeadzone(0.2f);
+    }
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+        waitForStart();
+
+        while (opModeIsActive()){
+            move();
+        }
     }
 
     public void move() {
@@ -94,6 +67,9 @@ public class MechenumTeleOp extends OpMode {
             backLeft.setPower(bl);
             backRight.setPower(br);
         }
+
+        //GAMEPAD 2
+
         //lift
        if (gamepad2.right_trigger > 0){
            lift.setPower(1);
@@ -138,11 +114,4 @@ public class MechenumTeleOp extends OpMode {
         }
 
     }
-
-    @Override
-    public void loop() {
-        //init();
-        move();
-    }
-
 }

@@ -12,7 +12,6 @@ public class Testing extends SkystoneRobot {
             initDriveHardware();
             initAttachCode();
 
-            forwardWithProportionalDrive(30, .5);
         }
     }
 }

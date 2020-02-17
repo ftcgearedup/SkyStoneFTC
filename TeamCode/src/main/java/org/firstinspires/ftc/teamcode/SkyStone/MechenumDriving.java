@@ -62,6 +62,7 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
         //its a bit of a waste of time
         //The color sensor can do the same thing, and navigation targets are hard
         //you could always try tensor flow. That works better but is a bit tricky to set up
+        //ask lucas
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.loggingEnabled = false;
         parameters.mode                = BNO055IMU.SensorMode.IMU;
@@ -139,7 +140,6 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
     }
 
     //Rightwards
-    //D
     public void sideRight(double targetDistance, double power) {
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -154,7 +154,7 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
 
     }
 //move left.
-    //when the robot reaches the target encoder tick distance, it will stop,
+    //when the robot reaches the target encoder tick distance, it will stop,(hopefully)
     public void sideLeft(double targetDistance, double power) {
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -166,6 +166,7 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
             backLeft.setPower(power);
             backRight.setPower(-power);
         }
+        stopMotors();
     }
 
     //clockwise is 0 cc is 1
@@ -184,6 +185,7 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
         stopMotors();
     }
 
+    //this is not calibrated for the robot itself yet-sorry
     public void pivotCC(double degree, double power) {
 
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -290,7 +292,7 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
     }
 
     // pulled from daniel's code
-    // Below this is Dainel based versions
+    // Below this is Daniel based versions
 
     public static final double GYRO_ERROR_THRESHOLD = 5;
     public static final double P_GYRO_TURN_COEFF = 0.008;
@@ -308,7 +310,6 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
     }
 
     public void gyroPivot(double speed, double angle) {
-
         double steer;
         double threshold = getGyroError(angle) > 0 ? GYRO_ERROR_THRESHOLD
                 : -GYRO_ERROR_THRESHOLD;
