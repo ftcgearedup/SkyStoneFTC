@@ -20,7 +20,7 @@ public class MechenumTeleOp extends SkystoneRobot {
         backRight.setPower(0);
 
         // set attachment power variables
-        intake.setPower(0);
+      //  intake.setPower(0);
         lift.setPower(0);
 
         // set deadzone
@@ -81,21 +81,21 @@ public class MechenumTeleOp extends SkystoneRobot {
         //Dropper
         if (gamepad2.a) {
             telemetry.addData("a Button", "pressed");
-            dropper.setPosition(.1);
+       //     release.setPosition(.1);
             telemetry.update();
         } else {
-            dropper.setPosition(.4);
+        //    release.setPosition(.4);
             telemetry.addData("a Button", " not pressed");
             telemetry.update();
         }
         //intake
-        intake.setPower(gamepad2.right_stick_y);
-        if (gamepad2.dpad_left){
-            intake.setPower(1);
-        }
-        if (gamepad2.dpad_right){
-            intake.setPower(-1);
-        }
+       // intake.setPower(gamepad2.right_stick_y);
+      //  if (gamepad2.dpad_left){
+      //      intake.setPower(1);
+     //   }
+      //  if (gamepad2.dpad_right){
+       //     intake.setPower(-1);
+     //   }
         //Telemetry
         telemetry.addData("motor speeds", "fl " + fl + " fr " + fr + " bl " + bl + " br " + br);
         telemetry.update();

@@ -11,38 +11,39 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class SkystoneRobot extends MechenumDriving {
 
     public DcMotor lift;
-    public Servo dropper;
+  //  public Servo release;
     public Servo clamp1;
     public Servo clamp2;
-    public DcMotor intake;
+  //  public DcMotor intake;
 
     public void initAttachCode() {
         //init the Attachments
-        intake = hardwareMap.dcMotor.get("in");
+    //    intake = hardwareMap.dcMotor.get("in");
         lift = hardwareMap.dcMotor.get("lift");
-        dropper = hardwareMap.servo.get("drop");
-        clamp1 = hardwareMap.servo.get("clamp1");
-        clamp2 = hardwareMap.servo.get("clamp2");
+
+    //    release = hardwareMap.servo.get("AIR");
+        clamp1 = hardwareMap.servo.get("FC");
+        clamp2 = hardwareMap.servo.get("BC");
 
         //set attatchment direction
-        intake.setDirection(DcMotorSimple.Direction.FORWARD);
+     //   intake.setDirection(DcMotorSimple.Direction.FORWARD);
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // set attachment power variables
-        intake.setPower(0);
+       // intake.setPower(0);
         lift.setPower(0);
 
     }
 
     //Turns both sides of the intake on.
     public void intake(double power) {
-        intake.setPower(power);
+       // intake.setPower(power);
     }
 
     // This code uses the reflected light value of the skystone in order to determine weather or not it is the correct one.
     //If the value is below 15 it collects, and  if it is above 15 it moves on.
     //These values are estimated at about a Distance of 4-6 inches in a medium light enviorment with the LED on
-    public void findSkyStoneAlpha() {
+  /*  public void findSkyStoneAlpha() {
         if (colorSensor.alpha() >= 15) {
             forwardForever();
         } else if (colorSensor.alpha() <= 15) {
@@ -91,5 +92,5 @@ public class SkystoneRobot extends MechenumDriving {
         }
 
 
-    }
+  */
 }

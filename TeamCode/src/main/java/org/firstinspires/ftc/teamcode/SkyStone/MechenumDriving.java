@@ -24,7 +24,7 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
     public DcMotor backLeft;
     public DcMotor frontLeft;
     public AngularVelocity angleV;
-    public ColorSensor colorSensor;
+   // public ColorSensor colorSensor;
     public double degree = 0;
     public BNO055IMU imu;
 
@@ -56,13 +56,6 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-
-        // tHIS Is set up for vuforia stuff
-        //Please don't use vuforia unless you are a master programmer or it gets much better in the futurw
-        //its a bit of a waste of time
-        //The color sensor can do the same thing, and navigation targets are hard
-        //you could always try tensor flow. That works better but is a bit tricky to set up
-        //ask lucas
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.loggingEnabled = false;
         parameters.mode                = BNO055IMU.SensorMode.IMU;
@@ -71,8 +64,8 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
 
         //Gyro stuff
         imu = hardwareMap.get(BNO055IMU.class, "imu");
-
-        colorSensor = hardwareMap.colorSensor.get("color");
+        imu.initialize(parameters);
+     //   colorSensor = hardwareMap.colorSensor.get("color");
 
     }
 
@@ -185,7 +178,7 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
         stopMotors();
     }
 
-    //this is not calibrated for the robot itself yet-sorry
+    //this is not calibrated for the robot itsself
     public void pivotCC(double degree, double power) {
 
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -295,12 +288,12 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
     // Below this is Daniel based versions
 
     public static final double GYRO_ERROR_THRESHOLD = 5;
-    public static final double P_GYRO_TURN_COEFF = 0.008;
+    public static final double P_GYRO_TURN_COEFF = 0.02;
     //reference
     // imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XZY, AngleUnit.DEGREES)
 
     private double getGyroError(double targetAngle) {
-        double error = targetAngle - imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XZY, AngleUnit.DEGREES).firstAngle;
+        double error = targetAngle - imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XZY, AngleUnit.DEGREES).thirdAngle;
 
         // keep the error on a range of -179 to 180
         while(opModeIsActive() && error > 180)  error -= 360;
@@ -321,10 +314,14 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
 
             double proportionalSpeed = speed * steer;
 
-            frontLeft.setPower(proportionalSpeed);
+            frontLeft.setPower(-proportionalSpeed);
             frontRight.setPower(proportionalSpeed);
-            backLeft.setPower(proportionalSpeed);
+            backLeft.setPower(-proportionalSpeed);
             backRight.setPower(proportionalSpeed);
+
+            if(Math.abs(proportionalSpeed) <= .01){
+                break;
+            }
         }
 
         // when we're on target, stop the robot
