@@ -11,8 +11,13 @@ public class Testing extends SkystoneRobot {
         while (opModeIsActive()) {
             initDriveHardware();
             initAttachCode();
-            gyroPivot(.5,100);
-
+            forward(60, .7);
+            stopMotors();
+            sideRight(6200, .7 );
+            stopMotors();
+            clamp1.setPosition(0);
+            clamp2.setPosition(0);
+            break;
         }
     }
 }

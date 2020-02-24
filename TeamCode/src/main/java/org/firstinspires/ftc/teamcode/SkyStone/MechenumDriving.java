@@ -103,10 +103,10 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
             telemetry.addData("Current Distance cm", currentDistanceTicks / ticksPerCm);
             telemetry.update();
 
-            frontLeft.setPower(power);
-            frontRight.setPower(power);
-            backLeft.setPower(power);
-            backRight.setPower(power);
+            frontLeft.setPower(-power);
+            frontRight.setPower(-power);
+            backLeft.setPower(-power);
+            backRight.setPower(-power);
         }
         stopMotors();
     }
@@ -137,14 +137,14 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
         double currentDistance = 0;
-        while ((currentDistance < targetDistance) && opModeIsActive()) {
+        while ((Math.abs(currentDistance) < targetDistance) && opModeIsActive()) {
             currentDistance = frontLeft.getCurrentPosition();
-            frontLeft.setPower(power);
-            frontRight.setPower(-power);
-            backLeft.setPower(-power);
-            backRight.setPower(power);
+            frontLeft.setPower(-power);
+            frontRight.setPower(power);
+            backLeft.setPower(power);
+            backRight.setPower(-power);
         }
-
+        stopMotors();
     }
 //move left.
     //when the robot reaches the target encoder tick distance, it will stop,(hopefully)
@@ -152,12 +152,12 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
         double currentDistance = 0;
-        while (currentDistance < targetDistance && opModeIsActive()) {
+        while (Math.abs(currentDistance) < targetDistance && opModeIsActive()) {
             currentDistance = frontRight.getCurrentPosition();
-            frontLeft.setPower(-power);
-            frontRight.setPower(power);
-            backLeft.setPower(power);
-            backRight.setPower(-power);
+            frontLeft.setPower(power);
+            frontRight.setPower(-power);
+            backLeft.setPower(-power);
+            backRight.setPower(power);
         }
         stopMotors();
     }

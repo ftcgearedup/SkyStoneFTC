@@ -32,6 +32,9 @@ public class MechenumTeleOp extends SkystoneRobot {
         waitForStart();
 
         while (opModeIsActive()){
+            initDriveHardware();
+            initAttachCode();
+            initTeleop();
             move();
         }
     }

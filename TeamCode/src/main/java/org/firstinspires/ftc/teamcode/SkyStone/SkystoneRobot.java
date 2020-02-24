@@ -18,7 +18,7 @@ public class SkystoneRobot extends MechenumDriving {
 
     public void initAttachCode() {
         //init the Attachments
-    //    intake = hardwareMap.dcMotor.get("in");
+    //  intake = hardwareMap.dcMotor.get("in");
         lift = hardwareMap.dcMotor.get("lift");
 
     //    release = hardwareMap.servo.get("AIR");
@@ -31,7 +31,7 @@ public class SkystoneRobot extends MechenumDriving {
 
         // set attachment power variables
        // intake.setPower(0);
-        lift.setPower(0);
+    //    lift.setPower(0);
 
     }
 
