@@ -30,11 +30,11 @@ public class MechenumTeleOp extends SkystoneRobot {
     @Override
     public void runOpMode() throws InterruptedException {
         waitForStart();
-
+        initDriveHardware();
+        initAttachCode();
+        initTeleop();
         while (opModeIsActive()){
-            initDriveHardware();
-            initAttachCode();
-            initTeleop();
+
             move();
         }
     }
