@@ -24,7 +24,7 @@ public class MechenumDriving extends VuforiaSkyStoneNavigationWebcam {
     public DcMotor backLeft;
     public DcMotor frontLeft;
     public AngularVelocity angleV;
-   // public ColorSensor colorSensor;
+    public ColorSensor colorSensor;
     public double degree = 0;
     public BNO055IMU imu;
 

@@ -115,14 +115,14 @@ public class AutoMain extends SkystoneRobot {
 
             // intake a Skystone
             sideLeft(1000,.75);
-            intake(1);
+            intake.setPosition(1);
             forward(30, .75);
             forward(30, -.75);
             forward(0,0);
             sideRight(1050, .75);
             forward(60,.75);
             forward(70, -.75);
-            intake(0);
+            intake.setPosition(1);
 
             //Move to Foundation
             sidewaysWithProportionalDrive(5300,1);
@@ -151,14 +151,14 @@ public class AutoMain extends SkystoneRobot {
 
             // intake a Skystone
             sideLeft(1000, .75);
-            intake(1);
+            intake.setPosition(1);
             forward(30, .75);
             forward(30, -.75);
             forward(0, 0);
             sideRight(1050, .75);
             forward(60, .75);
             forward(70, -.75);
-            intake(0);
+            intake.setPosition(1);
 
             //Move to Foundation
             sidewaysWithProportionalDrive(5300, 1);
@@ -189,14 +189,14 @@ public class AutoMain extends SkystoneRobot {
 
             // intake a Skystone
             sideRight(1000,.75);
-            intake(1);
+            intake.setPosition(1);
             forward(30, .75);
             forward(30, -.75);
             forward(0,0);
             sideLeft(1050, .75);
             forward(60,.75);
             forward(70, -.75);
-            intake(0);
+            intake.setPosition(1);
 
             //Move to Foundation
             sidewaysWithProportionalDrive(5300,1);

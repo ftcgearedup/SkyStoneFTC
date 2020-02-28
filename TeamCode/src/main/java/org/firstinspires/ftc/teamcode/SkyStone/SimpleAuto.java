@@ -53,6 +53,7 @@ public class SimpleAuto extends SkystoneRobot {
                 telemetry.update();
                 waitForStart();
                 while (opModeIsActive()){
+                    release.setPosition(0);
                     sideRight(1800, .7 );
                     break;
                 }
@@ -63,6 +64,7 @@ public class SimpleAuto extends SkystoneRobot {
                 telemetry.update();
                 waitForStart();
                 while (opModeIsActive()){
+                    release.setPosition(0);
                     forward(50, .7);
                     stopMotors();
                     sideRight(1800, .7 );
@@ -75,8 +77,10 @@ public class SimpleAuto extends SkystoneRobot {
                 telemetry.update();
                 waitForStart();
                 while (opModeIsActive()){
+                    release.setPosition(0);
                     sideLeft(1800, .7 );
                     stopMotors();
+                    break;
                 }
                 telemetry.update();
                 break;
@@ -85,10 +89,12 @@ public class SimpleAuto extends SkystoneRobot {
                 telemetry.update();
                 waitForStart();
                 while (opModeIsActive()){
+                    release.setPosition(0);
                     forward(50, .7);
                     stopMotors();
-                    sideRight(1800, .7 );
+                    sideLeft(1800, .7 );
                     stopMotors();
+                    break;
 
                 }
                 telemetry.update();
