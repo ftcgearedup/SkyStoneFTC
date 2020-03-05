@@ -23,18 +23,18 @@ public class MechenumTeleOp extends SkystoneRobot {
       //  intake.setPower(0);
         lift.setPower(0);
 
+        intake.setPosition(0.2);
         // set deadzone
         gamepad1.setJoystickDeadzone(0.2f);
     }
 
     @Override
     public void runOpMode() throws InterruptedException {
-        waitForStart();
         initDriveHardware();
         initAttachCode();
         initTeleop();
+        waitForStart();
         while (opModeIsActive()){
-
             move();
         }
     }
@@ -71,47 +71,43 @@ public class MechenumTeleOp extends SkystoneRobot {
             backRight.setPower(br);
         }
 
+        //clamps
+        if (gamepad1.left_bumper){
+            clamp1.setPosition(1);
+            clamp2.setPosition(0);
+        }else{
+            clamp1.setPosition(0);//Was 1, changed to .8 so the servo does not push on the frame.
+            clamp2.setPosition(1);
+        }
+
+
         //GAMEPAD 2
 
-        //lift
-       if (gamepad2.right_trigger > 0){
-           lift.setPower(1);
-       } if(gamepad2.left_trigger >0){
-           lift.setPower(-1);
-        } else{
-           lift.setPower(0);
-        }
+        lift.setPower( gamepad2.right_stick_y);
+
+
         //Dropper
-        if (gamepad2.a) {
+        if (gamepad2.b) {
             telemetry.addData("a Button", "pressed");
-            release.setPosition(.1);
+            release.setPosition(0);
             telemetry.update();
         } else {
-           release.setPosition(.4);
+           release.setPosition(.6);
             telemetry.addData("a Button", " not pressed");
             telemetry.update();
         }
-        if (gamepad2.dpad_left){
+        //intake
+        while (gamepad2.x){
+            telemetry.addData("Intake", "closed");
+            intake.setPosition(1);
+            telemetry.update();
+       }
+        while (!gamepad2.x){
             intake.setPosition(0);
-       }if (gamepad2.dpad_right){
-            intake.setPosition(.3);
         }
         //Telemetry
         telemetry.addData("motor speeds", "fl " + fl + " fr " + fr + " bl " + bl + " br " + br);
         telemetry.update();
-
-        //clamps
-        if (gamepad2.right_bumper){
-            clamp1.setPosition(0);
-        }else{
-            clamp1.setPosition(.8); //Was 1, changed to .8 so the servo does not push on the frame.
-        }
-
-        if(gamepad2.left_bumper){
-            clamp2.setPosition(1);
-        }else{
-            clamp2.setPosition(.4); //Was 0, changed to .2 so the servo does not push on the frame.
-        }
 
     }
 }
