@@ -36,6 +36,7 @@ public class MechenumTeleOp extends SkystoneRobot {
         waitForStart();
         while (opModeIsActive()){
             move();
+
         }
     }
 
@@ -82,8 +83,6 @@ public class MechenumTeleOp extends SkystoneRobot {
 
 
         //GAMEPAD 2
-
-        lift.setPower( gamepad2.right_stick_y);
 
 
         //Dropper
